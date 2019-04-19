@@ -7,6 +7,7 @@ contract ExerciseC6A {
     /********************************************************************************************/
 
 
+    uint constant M = 3;
     struct UserProfile {
         bool isRegistered;
         bool isAdmin;
@@ -17,6 +18,9 @@ contract ExerciseC6A {
     mapping(address => UserProfile) userProfiles;   // Mapping for storing user profiles
 
     bool private operational = true;
+
+    address[] multiCallsAddress = new address[](0);
+    mapping(address => bool) multiCallsMap;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -131,9 +135,22 @@ contract ExerciseC6A {
                                 bool mode
                             ) 
                             external
-                            requireContractOwner 
     {
-        operational = mode;
+        require(mode != operational, "New mode must be different from existing mode");
+        require(userProfiles[msg.sender].isAdmin, "Caller is not an admin");
+
+        // prevent multi vote from same user
+        require(!multiCallsMap[msg.sender], "Caller has already called this function.");
+
+        multiCallsMap[msg.sender] = true;
+        multiCallsAddress.push(msg.sender);
+        if (multiCallsAddress.length >= M) {
+            operational = mode;
+            for(uint c=0; c<multiCallsAddress.length; c++) {
+                multiCallsMap[multiCallsAddress[c]] = false;
+            }
+            multiCallsAddress = new address[](0);
+        }
     }
 }
 
