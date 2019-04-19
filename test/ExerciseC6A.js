@@ -9,7 +9,7 @@ contract('ExerciseC6A', async (accounts) => {
 
   it('contract owner can register new user', async () => {
     // ARRANGE
-    const caller = accounts[1] // This should be config.owner or accounts[0] for registering a new user
+    const caller = accounts[0] // This should be config.owner or accounts[0] for registering a new user
     const newUser = config.testAddresses[0]
 
     // ACT
