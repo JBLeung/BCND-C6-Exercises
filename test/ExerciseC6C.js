@@ -1,3 +1,4 @@
+
 const Test = require('../config/testConfig.js')
 
 contract('ExerciseC6C', async (accounts) => {
